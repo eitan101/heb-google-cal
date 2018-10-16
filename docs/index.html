@@ -1,1 +1,331 @@
-hello
+<!--
+Copyright 2018 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!-- [START calendar_quickstart] -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Calendar API Quickstart</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <p>Google Calendar API Quickstart</p>
+
+    <!--Add buttons to initiate auth sequence and sign out-->
+    <button id="authorize_button" style="display: none;">Authorize</button>
+    <button id="signout_button" style="display: none;">Sign Out</button>
+
+    <select id="calendar_select" style="display: none;"></select>    
+    <select id="fromYear_select" style="display: none;"></select>
+    <select id="toYear_select" style="display: none;"></select>
+    <button id="duplicate_button" style="display: none;">Duplicate</button>
+
+    <pre id="content"></pre>
+    <script src="hebcal.min.js"></script>
+    <script type="text/javascript">
+      // Client ID and API key from the Developer Console
+      var CLIENT_ID = '133534839514-6srelmk6gbv1h0abll2q70q614g8v93b.apps.googleusercontent.com';
+      var API_KEY = 'AIzaSyB52Jhdt_cLZh9aXxVCAkr4WciMK0aVXaQ';
+
+      // Array of API discovery doc URLs for APIs used by the quickstart
+      var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+
+      // Authorization scopes required by the API; multiple scopes can be
+      // included, separated by spaces.
+      var SCOPES = "https://www.googleapis.com/auth/calendar.events";
+
+      var authorizeButton = document.getElementById('authorize_button');
+      var signoutButton = document.getElementById('signout_button');
+      var calendarSelect = document.getElementById('calendar_select');
+      var fromYearSelect = document.getElementById('fromYear_select');
+      var toYearSelect = document.getElementById('toYear_select');
+      var duplicateButton = document.getElementById('duplicate_button');
+
+      /**
+       *  On load, called to load the auth2 library and API client library.
+       */
+      function handleClientLoad() {
+        gapi.load('client:auth2', initClient);
+      }
+
+      /**
+       *  Initializes the API client library and sets up sign-in state
+       *  listeners.
+       */
+      function initClient() {
+        gapi.client.init({
+          apiKey: API_KEY,
+          clientId: CLIENT_ID,
+          discoveryDocs: DISCOVERY_DOCS,
+          scope: SCOPES
+        }).then(function () {
+          // Listen for sign-in state changes.
+          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+          // Handle the initial sign-in state.
+          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+          authorizeButton.onclick = handleAuthClick;
+          signoutButton.onclick = handleSignoutClick;
+        });
+      }
+
+      /**
+       *  Called when the signed in status changes, to update the UI
+       *  appropriately. After a sign-in, the API is called.
+       */
+      function updateSigninStatus(isSignedIn) {
+        var opt = {
+          calendarId: "iti5mtvc06523hehdp6l03t92g@group.calendar.google.com",
+          fromYear: 5779,
+          toYear: 5780
+        }
+        if (isSignedIn) {
+          authorizeButton.style.display = 'none';
+          signoutButton.style.display = 'block';
+          handleCalendars();
+          // deleteTargetYearEventsAndDup(opt);
+        } else {
+          authorizeButton.style.display = 'block';
+          signoutButton.style.display = 'none';
+        }
+      }
+
+      /**
+       *  Sign in the user upon button click.
+       */
+      function handleAuthClick(event) {
+        gapi.auth2.getAuthInstance().signIn();
+      }
+
+      /**
+       *  Sign out the user upon button click.
+       */
+      function handleSignoutClick(event) {
+        gapi.auth2.getAuthInstance().signOut();
+      }
+
+      /**
+       * Append a pre element to the body containing the given message
+       * as its text node. Used to display the results of the API call.
+       *
+       * @param {string} message Text to be placed in pre element.
+       */
+      function appendPre(message) {
+        var pre = document.getElementById('content');
+        var textContent = document.createTextNode(message + '\n');
+        pre.appendChild(textContent);
+      }
+
+      /**
+       * Print the summary and start datetime/date of the next ten events in
+       * the authorized user's calendar. If no events are found an
+       * appropriate message is printed.
+       */
+
+      function getStartOfEvent(event) {
+        if (event.dateTime)
+          return event.dateTime;
+        return event.date;
+      }
+
+      function nextHebOccurence(event,delta) {            
+            var hd = new Hebcal.HDate(new Date(getStartOfEvent(event)));
+            return hd.setFullYear(hd.year+delta).greg();
+      }
+
+      function getFirstItem(cal) {
+        gapi.client.calendar.events.list({
+          'calendarId': cal,
+          'timeMin': new Date(1970,0,1).toISOString(),
+          'showDeleted': false,
+          'singleEvents': true,
+          'maxResults': 1,
+          'orderBy': 'startTime'
+        }).then(function(response) {
+          var events = response.result.items;
+          if (events.length > 0) {
+            var start = getStartOfEvent(events[0].start);
+            var hd = new Hebcal.HDate(new Date(start));
+
+            var el = document.createElement("option");
+            el.textContent = hd.year;
+            el.value = hd.year;
+            fromYear_select.options.length = 0;
+            fromYear_select.appendChild(el);
+            fromYear_select.style.display = "block";
+            populateToYear();
+            // appendPre(cal.summary + " " + cal.id+ " "+ hd.year);
+          }
+        });           
+      }
+
+      function populateToYear() {
+        var curYear = new Hebcal.HDate().year;
+        toYear_select.options.length = 0;
+        toYear_select.style.display = "block";
+        for (i = 0; i < 5; i++) {
+          var el = document.createElement("option");          
+          el.textContent = curYear+i;
+          el.value = curYear+i;
+          toYear_select.appendChild(el);
+        }
+        duplicateButton.onclick = deleteTargetYearEventsAndDup;
+        duplicateButton.style.display = "block";
+      }
+
+      function handleCalendars() {
+        gapi.client.calendar.calendarList.list({
+          'minAccessRole': "owner",
+          'showDeleted': false,
+          'showHidden': false,
+          'maxResults': 10
+        }).then(function(response) {
+          var cals = response.result.items;
+          if (cals.length > 0) {
+            for (i = 0; i < cals.length; i++) {
+              var cal = cals[i];
+              var el = document.createElement("option");
+              el.textContent = cal.summary;
+              el.value = cal.id;
+              calendar_select.appendChild(el);
+            }
+            calendar_select.onchange = probeCalendar;
+            calendar_select.style.display = "block";
+            probeCalendar();
+          }
+        });
+      }
+
+      function probeCalendar() {
+        fromYear_select.style.display = "none";
+        toYear_select.style.display = "none";
+        duplicateButton.style.display = "none";
+        getFirstItem(calendar_select.options[calendar_select.selectedIndex].value);
+      }
+
+      function getSelectedValue(selectElement) {
+        return selectElement.options[selectElement.selectedIndex].value;
+      }
+
+      function deleteTargetYearEventsAndDup() {
+        var opt = {
+          calendarId: getSelectedValue(calendar_select),
+          toYear: getSelectedValue(toYear_select),
+          fromYear: getSelectedValue(fromYear_select)
+        }
+
+        var startDay = new Hebcal.HDate(1,7,opt.toYear);
+        var endDay = new Hebcal.HDate(startDay).setFullYear(startDay.year+1);
+        gapi.client.calendar.events.list({
+          'calendarId': opt.calendarId,
+          'timeMin': (startDay.greg()).toISOString(),
+          'timeMax': (endDay.greg()).toISOString(),
+          'showDeleted': false,
+          'singleEvents': true,
+          'maxResults': 100,
+          'orderBy': 'startTime'
+        }).then(function(response) {
+          var events = response.result.items;
+          appendPre('Deleting events:');
+
+          var batch = gapi.client.newBatch();
+
+          if (events.length > 0) {
+            for (i = 0; i < events.length; i++) {
+              var event = events[i];
+              // console.dir(event);
+              batch.add(gapi.client.calendar.events.delete({
+                'calendarId': opt.calendarId,
+                'eventId': event.id
+              }));
+            }
+            batch.then(function() {
+              duplicateHebrewEvents(opt);
+            });
+          } else {
+              duplicateHebrewEvents(opt);            
+          }
+        });
+      }
+
+      function duplicateHebrewEvents() {
+       var opt = {
+          calendarId: getSelectedValue(calendar_select),
+          toYear: getSelectedValue(toYear_select),
+          fromYear: getSelectedValue(fromYear_select)
+       }
+       var delta = opt.toYear - opt.fromYear;
+       var startDay = new Hebcal.HDate(1,7,opt.fromYear);
+        var endDay = new Hebcal.HDate(startDay).setFullYear(startDay.year+1);
+        gapi.client.calendar.events.list({
+          'calendarId': opt.calendarId,
+          'timeMin': (startDay.greg()).toISOString(),
+          'timeMax': (endDay.greg()).toISOString(),
+          'showDeleted': false,
+          'singleEvents': true,
+          'maxResults': 100,
+          'orderBy': 'startTime'
+        }).then(function(response) {
+          var events = response.result.items;
+          appendPre('Upcoming events:');
+          var batch = gapi.client.newBatch();
+
+          if (events.length > 0) {
+            for (i = 0; i < events.length; i++) {
+              var event = events[i];
+              var kk = nextHebOccurence(event.start,delta);
+              var jj = nextHebOccurence(event.end,delta);
+
+              appendPre(event.summary + " next: "+kk.toLocaleDateString("en-GB"));
+
+              // console.dir(event);
+              var ne = {
+                'summary': event.summary,
+                'description': event.description,
+                'start' : {
+                  'dateTime':kk.toISOString()
+                },
+                'end' : {
+                  'dateTime':jj.toISOString()
+                }
+              }
+              // delete event.start.date;              
+              // delete event.start.dateTime;
+              // event.start.dateTime = kk.toISOString();
+              batch.add(gapi.client.calendar.events.insert({
+                'calendarId': opt.calendarId,
+                'resource': ne
+              }));
+            }
+            batch.then(function() {
+              console.dir("success");
+            });
+
+          } else {
+            // TODO return promise fail.
+            appendPre('No upcoming events found.');
+          }
+        });
+      }
+
+    </script>
+
+    <script async defer src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+  </body>
+</html>
+<!-- [END calendar_quickstart] -->
