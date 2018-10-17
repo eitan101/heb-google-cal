@@ -1,28 +1,26 @@
-<!--
-Copyright 2018 Google LLC
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-<!-- [START calendar_quickstart] -->
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Google Calendar API Quickstart</title>
+    <title>Duplicate Hebrew Dates</title>
     <meta charset="utf-8" />
   </head>
   <body>
-    <p>Google Calendar API Quickstart</p>
+    <h1>Duplicate hebrew dates in your Google calendar</h1>
+    <p>This app will let you manage hebrew dates easily, share them with others, and maintain them up-todate.</p>
 
+    <p>First, you will have to define a separate google calendar, and put in all the dates in the current hebrew year. As any google calendar, you will be able to share it with your family or friedns.</p>
+    <p>Once a year you will need this app in order to duplicate the dates from the current year to the next year, preserving the hebrew date. In order to do that:</p>
+    <ul>
+      <li>Press the authorize button and allow the app to access your calendars.</li>
+      <li>Choose the correct calendar from the dropdown.</li>
+      <li>Choose the original year containing the dates, usually current year.</li>
+      <li>Choose the target year you want to populate with the dates, usually next year.</li>
+      <li>Click the "Duplicate" button.</li>
+      <li>That's all.</li>
+    </ul>
+
+    <p>If you want to delete the target year before, you can use the "Delete Target" button. Please use this option carfully in order to avoid event loss.</p>
     <!--Add buttons to initiate auth sequence and sign out-->
     <button id="authorize_button" style="display: none;">Authorize</button>
     <div id="signedin_div" style="display: none;">
@@ -116,15 +114,10 @@ limitations under the License.
             duplicate_button.onclick = duplicateHebrewEvents;
 
             signedin_div.style.display = 'block';
-            // toYearSelect.style.display = "none";
-            // duplicateButton.style.display = "none";
-            // populateToYear();
           });
-          // deleteTargetYearEventsAndDup(opt);
         } else {
           authorizeButton.style.display = 'block';
           signedin_div.style.display = 'none';
-          // signoutButton.style.display = 'none';
         }
       }
 
@@ -234,20 +227,6 @@ limitations under the License.
         countEventsFromYear(selector,paragraph);
       }
 
-      // function populateToYear() {
-      //   var curYear = new Hebcal.HDate().year;
-      //   toYear_select.options.length = 0;
-      //   // toYear_select.style.display = "block";
-      //   for (i = 0; i < 5; i++) {
-      //     var el = document.createElement("option");          
-      //     el.textContent = curYear+i;
-      //     el.value = curYear+i;
-      //     toYear_select.appendChild(el);
-      //   }
-      //   // duplicateButton.onclick = deleteTargetYearEventsAndDup;
-      //   // duplicateButton.style.display = "block";
-      // }
-
       function deleteTargetYearEvents() {
         getEventsByYear(getSelectedValue(toYear_select))
         .then(function(response) {
@@ -324,4 +303,3 @@ limitations under the License.
     </script>
   </body>
 </html>
-<!-- [END calendar_quickstart] -->
