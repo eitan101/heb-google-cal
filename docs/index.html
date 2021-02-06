@@ -29,7 +29,7 @@
       <div id="signedin_div" style="display: none;">
         <button id="signout_button" style="display: none;">Sign Out</button>
         <div class="form-group">
-          <label for="calendar_select">Choose Calendar:</label>
+          <label for="calendar_select">בחר יומן לשכפול:</label>
           <select id="calendar_select"></select>    
         </div>
         <div class="form-group">
@@ -229,7 +229,7 @@
         getEventsByYear(getSelectedValue(selector))
         .then(function(response) {
             // paragraph.style.display = "block";
-            paragraph.innerHTML = response.result.items.length + " events found";
+            paragraph.innerHTML = response.result.items.length + " אירועים נמצאו";
         });
       }
 
@@ -246,7 +246,7 @@
         selector.selectedIndex = 5;
         selector.style.display = "block";
         selector.onchange = function() {
-          paragraph.innerHTML = "loading...";
+          paragraph.innerHTML = "טוען...";
           countEventsFromYear(selector,paragraph);
         }
         countEventsFromYear(selector,paragraph);
@@ -256,7 +256,7 @@
         getEventsByYear(getSelectedValue(toYear_select))
         .then(function(response) {
           var events = response.result.items;
-          duplicateP.innerHTML = "Deleting target year events..."
+          duplicateP.innerHTML = "מוחק אירועים בשנת היעד..."
           var batch = gapi.client.newBatch();
           if (events.length > 0) {
             for (i = 0; i < events.length; i++) {
@@ -268,7 +268,7 @@
               }));
             }
             batch.then(function() {
-              duplicateP.innerHTML = "Deleted succssfully";
+              duplicateP.innerHTML = "נמחק בהצלחה";
               toYear_select.onchange();
             });
           }                     
@@ -286,7 +286,7 @@
           toYear: getSelectedValue(toYear_select),
           fromYear: getSelectedValue(fromYear_select)
        }
-       duplicate_p.innerHTML = "Duplicating...";
+       duplicate_p.innerHTML = "משכפל...";
        var delta = opt.toYear - opt.fromYear;
        getEventsByYear(opt.fromYear)
         .then(function(response) {
@@ -309,13 +309,13 @@
                 }
               }));
             }
-            duplicate_p.innerHTML = "Duplicating "+events.length+" events...";
+            duplicate_p.innerHTML = "משכפל "+events.length+" אירועים...";
             batch.then(function() {
-              duplicate_p.innerHTML = "Duplicated succssfully"
+              duplicate_p.innerHTML = "השכפול הסתיים בהצלחה"
               toYear_select.onchange();
             });
           } else {
-            duplicate_p.innerHTML = "No events found."
+            duplicate_p.innerHTML = "לא נמצאו אירועים."
           }
         });
       }
