@@ -4,32 +4,32 @@
 .video-container { position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden; }
 .video-container iframe, .video-container object, .video-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   </style>
-<html>
+<html dir="rtl">
   <head>
     <title>Duplicate Hebrew Dates</title>
     <meta charset="utf-8" />
   </head>
   <body>
     <div class="container">
-      <h1>Getting Started</h1>
-      <div class="video-container"><iframe src="https://www.youtube.com/embed/RMBI4CHmD5s" frameborder="0" allowfullscreen></iframe></div>
-      <h1>Duplicate hebrew dates in your Google calendar</h1>
-      <p>This app will let you manage hebrew dates easily, share them with others, and maintain them up to date.</p>
-
-      <p>First, you will have to define a separate google calendar, and put in all the dates in the current hebrew year. As any google calendar, you will be able to share it with your family or friedns.</p>
-      <p>Once a year you will need this app in order to duplicate the dates from the current year to the next year, preserving the hebrew dates. In order to do that:</p>
+      <h1>ניהול אירועים בתאריך עברי ביומן גוגל</h1>
+      <p>יישום זה מאפשרת לך לנהל בקלות אירועים בתאריך עברי ולשתף אותם עם בני משפחה או חברים.</p>
+      <p>ראשית עליך ליצור יומן גוגל, ולהזין בשנה הנוכחית את כל האירועים. כמו כל יומן גוגל, תוכל לשתף אותו עם בני משפחתך וחברים. בעזרת יישום זה, תוכל לשכפל את האירועים לשנה הבאה על פי התאריך העברי.</p>
+      <p>כדי לעשות זאת:</p>
       <ul>
-        <li>Press the authorize button and allow the app to access your calendars.</li>
-        <li>Choose the correct calendar from the dropdown.</li>
-        <li>Choose the original year containing the dates, usually current year.</li>
-        <li>Choose the target year you want to populate with the dates, usually next year.</li>
-        <li>Click the "Duplicate" button.</li>
-        <li>That's all.</li>
+        <li>לחץ על כפתור ״אשר יישום״</li>
+        <li>בחר בשם היומן שאותו ברצונך לשכפל לשנה הבאנ</li>
+        <li>בחר את השנה הנוכחית כשנת להעתקה</li>
+        <li>בחר את השנה הבאה כשנת היעד</li>
+        <li>לחץ על כפתור ״העתק״</li>
       </ul>
+      <p>כדי למחוק את כל האירועים בשנת היעד בחר את שנת היעד ולחץ על כפתור ״מחק אירועים בשנת היעד״. שים לב שאפשרות זו תמחק את כל האירועים בשנה שציינת, השתמש באפשרות זו בזהירות מרובה !!</p>
 
-      <p>If you want to delete the target year before, you can use the "Delete Target" button. Please use this option carfully in order to avoid event loss.</p>
+      <h1>הדגמת שימוש ביישום</h1>
+      <div class="video-container"><iframe src="https://www.youtube.com/embed/RMBI4CHmD5s" frameborder="0" allowfullscreen></iframe></div>
+      <p>תודות למפתחי ספריית התוכנה <a href="https://github.com/hebcal/hebcal-js">hebcal.js</a> המשמשת את חישובי הלוח העברי ביישום זה.</p>
+
       <!--Add buttons to initiate auth sequence and sign out-->
-      <button id="authorize_button" class="btn btn-primary" style="display: none;">Authorize</button>
+      <button id="authorize_button" class="btn btn-primary" style="display: none;">אשר יישום</button>
       <div id="signedin_div" style="display: none;">
         <button id="signout_button" style="display: none;">Sign Out</button>
         <div class="form-group">
@@ -37,18 +37,18 @@
           <select id="calendar_select"></select>    
         </div>
         <div class="form-group">
-          <label for="fromYear_select">Origin Hebrew Year:</label>
+          <label for="fromYear_select">שנת המקור:</label>
           <select id="fromYear_select"></select>
           <small id="fromYear_p"></small>
         </div>
         <div class="form-group">
-          <label for="toYear_select">Targer Year:</label>
+          <label for="toYear_select">שנת היעד:</label>
           <select id="toYear_select"></select>
           <small id="toYear_p"></small>
         </div>
         <div class="form-row">
-          <button id="duplicate_button" class="btn btn-primary">Duplicate</button>
-          <button id="delete_button" class="btn btn-danger">Delete Target</button>
+          <button id="duplicate_button" class="btn btn-primary">שכפל</button>
+          <button id="delete_button" class="btn btn-danger">מחק אירועים בשנת היעד</button>
         </div>
         <div class="form-row">
           <small id="duplicate_p"></small>
