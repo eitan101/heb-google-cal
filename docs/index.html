@@ -52,7 +52,7 @@
       </div>
       <h1>הדגמת שימוש ביישום</h1>
       <div class="video-container"><iframe src="https://www.youtube.com/embed/RMBI4CHmD5s" allowfullscreen></iframe></div>
-      <p>תודות למפתחי ספריית התוכנה <a href="https://github.com/hebcal/hebcal-js">hebcal.js</a> המשמשת את חישובי הלוח העברי ביישום זה.</p>
+      <p>תודות למפתחי ספריית התוכנה <a href="https://github.com/hebcal/hebcal-js">hebcal.js</a> המשמשת לחישובי הלוח העברי ביישום זה.</p>
       </div>
 
   <!-- Latest compiled and minified CSS -->
@@ -292,14 +292,16 @@
         .then(function(response) {
           var events = response.result.items;
           var batch = gapi.client.newBatch();
+          var descSuffix = "אירוע זה נוצר על ידי Hebrew Birthdays, https://eitan101.github.io/heb-google-cal/"
           if (events.length > 0) {
             for (i = 0; i < events.length; i++) {
               var event = events[i];
+              var desc = event.description.includes(descSuffix) ? event.description : event.description.concat("\n\n",descSuffix)
               batch.add(gapi.client.calendar.events.insert({
                 'calendarId': opt.calendarId,
                 'resource': {
                   'summary': event.summary,
-                  'description': event.description,
+                  'description': desc,
                   'start' : {
                     'dateTime':nextHebOccurence(event.start,delta).toISOString()
                   },
