@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <style>
 .video-container { position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden; }
@@ -292,7 +291,7 @@
         .then(function(response) {
           var events = response.result.items;
           var batch = gapi.client.newBatch();
-          var descSuffix = "אירוע זה נוצר על ידי Hebrew Birthdays, https://eitan101.github.io/heb-google-cal/"
+          var descSuffix = "<p dir=rtl>אירוע זה נוצר על ידי <a href='https://eitan101.github.io/heb-google-cal/'>Hebrew Birthdays</a></p>"
           if (events.length > 0) {
             for (i = 0; i < events.length; i++) {
               var event = events[i];
